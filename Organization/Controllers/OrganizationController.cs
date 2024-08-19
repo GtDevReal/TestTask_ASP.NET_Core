@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Organization.Data;
 using Organization.Data.Entity;
+using Organization.Data.Interfaces;
 using Organization.Models;
 using System.Diagnostics;
 using System.Net.Http;
@@ -11,17 +12,17 @@ namespace Organization.Controllers
 	public class OrganizationController : Controller
 	{
 		private readonly ILogger<OrganizationController> _logger;
-		private OrganizationDbContext _db = new();
-		private HttpClient _httpClient;
+		private readonly IOrganizationService _organizationService;
 
-		public OrganizationController(ILogger<OrganizationController> logger)
+		public OrganizationController(ILogger<OrganizationController> logger, IOrganizationService organizationService)
 		{
+			_organizationService = organizationService;
 			_logger = logger;	
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
-			var divisionList = _db.Organization.ToList();
+			var divisionList = await _organizationService.GetAllAsync();
 			List<OrganizationViewModel> organization = [];
 			foreach (var division in divisionList)
 			{
@@ -35,9 +36,9 @@ namespace Organization.Controllers
 			return View(organization);
 		}
 
-		public IActionResult Add()
+		public async Task<IActionResult> Add()
 		{
-			var divisionList = _db.Organization.ToList();
+			var divisionList = await _organizationService.GetAllAsync();
 			ViewBag.Division = new SelectList(divisionList, "Name", "Name");
 			return View();
 		}
@@ -45,7 +46,7 @@ namespace Organization.Controllers
 		[HttpPost]
 		public IActionResult Add(OrganizationViewModel model)
 		{
-			if (ModelState.IsValid && !_db.Organization.Where(x => x.Name == model.Name).Any())
+			if (ModelState.IsValid)
 			{
 				OrganizationEntity entity = new()
 				{
@@ -53,8 +54,8 @@ namespace Organization.Controllers
 					Status = model.Status,
 					Division = model.Division,
 				};
-				_db.Add(entity);
-				_db.SaveChanges();
+				_organizationService.CreateAsync(entity);
+
 				return Redirect("Index");
 			}
 			else
