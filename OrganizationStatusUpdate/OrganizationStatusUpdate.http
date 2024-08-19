@@ -1,0 +1,6 @@
+@OrganizationStatusUpdate_HostAddress = http://localhost:5135
+
+GET {{OrganizationStatusUpdate_HostAddress}}/StatusUpdate/
+Accept: application/json
+
+###

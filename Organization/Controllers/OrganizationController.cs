@@ -4,6 +4,7 @@ using Organization.Data;
 using Organization.Data.Entity;
 using Organization.Models;
 using System.Diagnostics;
+using System.Net.Http;
 
 namespace Organization.Controllers
 {
@@ -11,6 +12,7 @@ namespace Organization.Controllers
 	{
 		private readonly ILogger<OrganizationController> _logger;
 		private OrganizationDbContext _db = new();
+		private HttpClient _httpClient;
 
 		public OrganizationController(ILogger<OrganizationController> logger)
 		{
@@ -59,12 +61,6 @@ namespace Organization.Controllers
 			{
 				return View();
 			}
-		}
-
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult Error()
-		{
-			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
 	}
 }

@@ -15,9 +15,14 @@
 		<tbody>
 		@foreach(var item in Model)
 		{
-			<tr>
+			<tr class="rowElem">
 				<td class="name">@item.Name</td>
 				<td>@item.Status</td>
+				<td style="display:none">
+					<div class="spinner-border" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+				</td>
 				<td>@item.Division</td>
 			</tr>
 		}
@@ -28,13 +33,15 @@
 
 <script>
 	const search = document.getElementById("search");
-	let tbodyElems = document.querySelectorAll(".name");
+	let tbodyElemsSearch = document.querySelectorAll(".name");
+
+	const rows = document.querySelectorAll('.rowElem');
 
 	search.oninput = function () {
 		let value = search.value.trim();
 
 		if (value != '') {
-			tbodyElems.forEach(function (elem) {
+			tbodyElemsSearch.forEach(function (elem) {
 				if (elem.innerText.toLowerCase().search(value.toLowerCase()) == -1) {
 					elem.parentNode.style.display = 'none';
 				}
@@ -44,11 +51,79 @@
 			});
 		}
 		else {
-			tbodyElems.forEach(function (elem) {
+			tbodyElemsSearch.forEach(function (elem) {
 				elem.parentNode.style.display = '';
 			});
 		};
-
 	};
+
+	function switchIconsToUpdating(){
+		rows.forEach(function (row) {
+			let cell = row.querySelector('td:nth-child(2)');
+			cell.style.display = 'none';
+		});
+		rows.forEach(function (row) {
+			let cell = row.querySelector('td:nth-child(3)');
+			cell.style.display = '';
+		});
+	};
+
+	function switchIconsReady() {
+		rows.forEach(function (row) {
+			let cell = row.querySelector('td:nth-child(2)');
+			cell.style.display = '';
+		});
+		rows.forEach(function (row) {
+			let cell = row.querySelector('td:nth-child(3)');
+			cell.style.display = 'none';
+		});
+	};
+
+	function updateStatuses(updatedStatuses) {
+		switchIconsReady();
+		rows.forEach(row => {
+			const nameCell = row.querySelector('td:first-child');
+			const name = nameCell.textContent;
+
+			if (updatedStatuses.hasOwnProperty(name)) {
+				const statusCell = row.querySelector('td:nth-child(2)');
+				statusCell.textContent = updatedStatuses[name];
+			}
+		});
+	};
+
+	function getUpdatedStatuses() {
+		return new Promise((resolve, reject) => {
+			const xhr = new XMLHttpRequest();
+			xhr.open('GET', 'http://localhost:5135/StatusUpdate');
+			xhr.onload = function () {
+				if (xhr.status >= 200 && xhr.status < 300) {
+					resolve(JSON.parse(xhr.response));
+				} 
+				else {
+					reject(xhr.statusText);
+				}
+			};
+			xhr.onerror = function () {
+				reject(xhr.statusText);
+			};
+			xhr.send();
+		});
+	};
+
+	async function startUpdateLoop() {
+		setInterval(async () => {
+			try {
+				switchIconsToUpdating();
+				const updatedStatuses = await getUpdatedStatuses();
+				updateStatuses(updatedStatuses);
+			} 
+			catch (error) {
+				console.error('Ошибка получения обновлений:', error);
+			}
+		}, 3000);
+	};
+
+	startUpdateLoop();
 </script>
 
