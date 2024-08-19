@@ -1,0 +1,54 @@
+﻿@model List<OrganizationViewModel>
+<div class="text-center">
+	<form class="d-flex">
+		<input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search" id="search">
+		<button class="btn btn-outline-success" type="submit">Синхронизация данных</button>
+	</form>
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Наименование</th>
+				<th scope="col">Статус</th>
+				<th scope="col">Подразделение</th>
+			</tr>
+		</thead>
+		<tbody>
+		@foreach(var item in Model)
+		{
+			<tr>
+				<td class="name">@item.Name</td>
+				<td>@item.Status</td>
+				<td>@item.Division</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	<a class="btn btn-outline-success" type="submit" href="@Url.Action("Add","Organization")">Добавить поле</a>
+</div>
+
+<script>
+	const search = document.getElementById("search");
+	let tbodyElems = document.querySelectorAll(".name");
+
+	search.oninput = function () {
+		let value = search.value.trim();
+
+		if (value != '') {
+			tbodyElems.forEach(function (elem) {
+				if (elem.innerText.toLowerCase().search(value.toLowerCase()) == -1) {
+					elem.parentNode.style.display = 'none';
+				}
+				else {
+					elem.parentNode.style.display = '';
+				}
+			});
+		}
+		else {
+			tbodyElems.forEach(function (elem) {
+				elem.parentNode.style.display = '';
+			});
+		};
+
+	};
+</script>
+

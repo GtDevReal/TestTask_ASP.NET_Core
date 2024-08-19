@@ -1,0 +1,43 @@
+﻿@model OrganizationViewModel
+
+<form asp-action="Add" asp-controller="Organization" method="post">
+    <label asp-for="Name" class="form-label"></label>
+    <input type="text" asp-for="Name" class="form-control" />
+    <span asp-validation-for="Name"></span>
+
+    <label asp-for="Status" class="form-label"></label>
+    <select class="form-select" asp-for="Status">
+        <option value="Активно">Активно</option>
+        <option value="Заблокировано">Заблокировано</option>
+    </select>
+
+    <label asp-for="Division" class="form-label" style="display:none" id="label"></label>
+    @Html.DropDownList("Division", ViewBag.Division as List<SelectListItem>, "Выбирите подразделение", new {@class = "form-control", style = "display:none", id = "dropdown"})
+    <input type="checkbox" id="childElementToggler" value="Дочерний элемент"/>
+
+    <label class="form-check-label" for="flexCheckChecked">Дочерний элемент</label>
+
+    <br />
+
+    <input type="submit" class="btn btn-primary" value="Добавить" />
+    <div asp-validation-summary=ModelOnly></div>
+</form>
+
+<script>
+    const checkbox = document.getElementById("childElementToggler");
+    const dropdown = document.getElementById("dropdown");
+    const label = document.getElementById("label");
+
+    function toggle() {
+        if (checkbox.checked) {
+            dropdown.style.display = 'block';
+            label.style.display = 'block';
+        }
+        else {
+            dropdown.style.display = 'none';
+            label.style.display = 'none';
+        }
+    };
+
+    checkbox.addEventListener("change", toggle);
+</script>
