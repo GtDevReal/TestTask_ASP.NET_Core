@@ -1,3 +1,4 @@
+using Organization.Data;
 using Organization.Data.Entity;
 using Organization.Data.Interfaces;
 using Organization.Data.Repositories;
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<OrganizationDbContext>();
 builder.Services.AddScoped<IRepository<OrganizationEntity>, OrganizationRepository>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();	
 

@@ -11,8 +11,8 @@
         <option value="Заблокировано">Заблокировано</option>
     </select>
 
-    <label asp-for="Division" class="form-label" style="display:none" id="label"></label>
-    @Html.DropDownList("Division", ViewBag.Division as List<SelectListItem>, "Выбирите подразделение", new {@class = "form-control", style = "display:none", id = "dropdown"})
+    <label asp-for="ParentId" class="form-label" style="display:none" id="label"></label>
+    @Html.DropDownListFor(m => m.ParentId, ViewBag.ParentId as List<SelectListItem>, "Выбирите подразделение", new { @class = "form-control", style = "display:none", id = "dropdown" })
     <input type="checkbox" id="childElementToggler" value="Дочерний элемент"/>
 
     <label class="form-check-label" for="flexCheckChecked">Дочерний элемент</label>
@@ -20,7 +20,6 @@
     <br />
 
     <input type="submit" class="btn btn-primary" value="Добавить" />
-    <div asp-validation-summary=ModelOnly></div>
 </form>
 
 <script>

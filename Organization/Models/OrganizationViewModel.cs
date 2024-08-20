@@ -12,6 +12,11 @@ namespace Organization.Models
 		public string Status { get; set; }
 
 		[Display(Name = "Подразделение")]
-		public string? Division { get; set; }
+		public string? ParentId { get; set; }
+
+		public OrganizationViewModel? Parent { get; set; }
+
+		public IEnumerable<OrganizationViewModel>? Children { get; set; }
+
 	}
 }

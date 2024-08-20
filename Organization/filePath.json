@@ -1,0 +1,86 @@
+{
+  "$id": "1",
+  "$values": [
+    {
+      "$id": "2",
+      "Name": "Ректорат",
+      "Status": "Заблокированно",
+      "ParentId": null,
+      "Parent": null,
+      "Children": {
+        "$id": "3",
+        "$values": [
+          {
+            "$id": "4",
+            "Name": "Бухгалтерия",
+            "Status": "Активно",
+            "ParentId": "Ректорат",
+            "Parent": {
+              "$ref": "2"
+            },
+            "Children": {
+              "$id": "5",
+              "$values": [
+                {
+                  "$id": "6",
+                  "Name": "Главный бухгалтер",
+                  "Status": "Активно",
+                  "ParentId": "Бухгалтерия",
+                  "Parent": {
+                    "$ref": "4"
+                  },
+                  "Children": null
+                }
+              ]
+            }
+          },
+          {
+            "$id": "7",
+            "Name": "Деканат (ГПФ)",
+            "Status": "Активно",
+            "ParentId": "Ректорат",
+            "Parent": {
+              "$ref": "2"
+            },
+            "Children": null
+          },
+          {
+            "$id": "8",
+            "Name": "Деканат (Эконом)",
+            "Status": "Активно",
+            "ParentId": "Ректорат",
+            "Parent": {
+              "$ref": "2"
+            },
+            "Children": null
+          },
+          {
+            "$id": "9",
+            "Name": "Деканат (ТТ)",
+            "Status": "Активно",
+            "ParentId": "Ректорат",
+            "Parent": {
+              "$ref": "2"
+            },
+            "Children": null
+          }
+        ]
+      }
+    },
+    {
+      "$ref": "4"
+    },
+    {
+      "$ref": "7"
+    },
+    {
+      "$ref": "8"
+    },
+    {
+      "$ref": "9"
+    },
+    {
+      "$ref": "6"
+    }
+  ]
+}

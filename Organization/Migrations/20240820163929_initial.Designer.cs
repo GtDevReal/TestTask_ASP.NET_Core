@@ -11,8 +11,8 @@ using Organization.Data;
 namespace Organization.Migrations
 {
     [DbContext(typeof(OrganizationDbContext))]
-    [Migration("20240819135535_Initial")]
-    partial class Initial
+    [Migration("20240820163929_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,7 +29,7 @@ namespace Organization.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<string>("Division")
+                    b.Property<string>("ParentId")
                         .HasColumnType("text");
 
                     b.Property<string>("Status")
@@ -38,7 +38,23 @@ namespace Organization.Migrations
 
                     b.HasKey("Name");
 
+                    b.HasIndex("ParentId");
+
                     b.ToTable("Organization", (string)null);
+                });
+
+            modelBuilder.Entity("Organization.Data.Entity.OrganizationEntity", b =>
+                {
+                    b.HasOne("Organization.Data.Entity.OrganizationEntity", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("Organization.Data.Entity.OrganizationEntity", b =>
+                {
+                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }

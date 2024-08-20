@@ -1,6 +1,6 @@
-﻿@model List<OrganizationViewModel>
+﻿@model IEnumerable<OrganizationViewModel>
 <div class="text-center">
-	<form class="d-flex">
+	<form class="d-flex" asp-action="Synchronize" asp-asp-controller="Organization">
 		<input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search" id="search">
 		<button class="btn btn-outline-success" type="submit">Синхронизация данных</button>
 	</form>
@@ -23,7 +23,7 @@
 						<span class="visually-hidden">Loading...</span>
 					</div>
 				</td>
-				<td>@item.Division</td>
+				<td>@item.ParentId</td>
 			</tr>
 		}
 		</tbody>
@@ -111,18 +111,18 @@
 		});
 	};
 
-	async function startUpdateLoop() {
-		setInterval(async () => {
-			try {
-				switchIconsToUpdating();
-				const updatedStatuses = await getUpdatedStatuses();
-				updateStatuses(updatedStatuses);
-			} 
-			catch (error) {
-				console.error('Ошибка получения обновлений:', error);
-			}
-		}, 3000);
-	};
+	// async function startUpdateLoop() {
+	// 	setInterval(async () => {
+	// 		try {
+	// 			switchIconsToUpdating();
+	// 			const updatedStatuses = await getUpdatedStatuses();
+	// 			updateStatuses(updatedStatuses);
+	// 		} 
+	// 		catch (error) {
+	// 			console.error('Ошибка получения обновлений:', error);
+	// 		}
+	// 	}, 3000);
+	// };
 
 	startUpdateLoop();
 </script>

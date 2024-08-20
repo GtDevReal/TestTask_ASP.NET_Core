@@ -3,24 +3,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Organization.Data;
 using Organization.Data.Entity;
 using Organization.Data.Interfaces;
+using Organization.Data.Repositories;
 using Organization.Models;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Organization.Controllers
 {
-	public class OrganizationController : Controller
+	public class OrganizationController(ILogger<OrganizationController> logger, IOrganizationService organizationService) : Controller
 	{
-		private readonly ILogger<OrganizationController> _logger;
-		private readonly IOrganizationService _organizationService;
+		private readonly ILogger<OrganizationController> _logger = logger;
+		private readonly IOrganizationService _organizationService = organizationService;
 
-		public OrganizationController(ILogger<OrganizationController> logger, IOrganizationService organizationService)
-		{
-			_organizationService = organizationService;
-			_logger = logger;	
-		}
-
-		public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
 		{
 			var divisionList = await _organizationService.GetAllAsync();
 			List<OrganizationViewModel> organization = [];
@@ -30,31 +27,47 @@ namespace Organization.Controllers
 				{
 					Name = division.Name,
 					Status = division.Status,
-					Division = division.Division,
-				});
-			}
-			return View(organization);
+					ParentId = division.ParentId,
+                });
+            }
+            return View(organization);
 		}
 
-		public async Task<IActionResult> Add()
+        public async Task<IActionResult> Add()
 		{
 			var divisionList = await _organizationService.GetAllAsync();
-			ViewBag.Division = new SelectList(divisionList, "Name", "Name");
+			ViewBag.ParentId = new SelectList(divisionList, "Name", "Name");
 			return View();
 		}
 
 		[HttpPost]
-		public IActionResult Add(OrganizationViewModel model)
+		public async Task<IActionResult> Add(OrganizationViewModel model)
 		{
 			if (ModelState.IsValid)
 			{
-				OrganizationEntity entity = new()
+				if (!String.IsNullOrEmpty(model.ParentId))
 				{
-					Name = model.Name,
-					Status = model.Status,
-					Division = model.Division,
-				};
-				_organizationService.CreateAsync(entity);
+					var parent = await _organizationService.GetByNameAsync(model.ParentId);
+                    OrganizationEntity entity = new()
+                    {
+                        Name = model.Name,
+                        Status = model.Status,
+                        ParentId = model.ParentId,
+						Parent = parent
+                    };
+                    await _organizationService.CreateAsync(entity);
+                }
+				else
+				{
+                    OrganizationEntity entity = new()
+                    {
+                        Name = model.Name,
+                        Status = model.Status,
+                        ParentId = model.ParentId,
+                    };
+                    await _organizationService.CreateAsync(entity);
+                }
+				
 
 				return Redirect("Index");
 			}
@@ -62,6 +75,17 @@ namespace Organization.Controllers
 			{
 				return View();
 			}
+		}
+
+		public async Task<IActionResult> Synchronize()
+		{
+			string jsonString = await System.IO.File.ReadAllTextAsync("filePath.json");
+			var divisionEntity = JsonSerializer.Deserialize<List<OrganizationEntity>>(jsonString, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve });
+
+			if (divisionEntity != null)
+				await _organizationService.SynchronizeAsync(divisionEntity);
+
+			return RedirectToAction("Index");
 		}
 	}
 }

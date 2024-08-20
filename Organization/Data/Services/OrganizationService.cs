@@ -3,26 +3,26 @@ using Organization.Data.Interfaces;
 
 namespace Organization.Data.Services
 {
-	public class OrganizationService : IOrganizationService
+	public class OrganizationService(IRepository<OrganizationEntity> repository) : IOrganizationService
 	{
-		private readonly IRepository<OrganizationEntity> _repository;
+		private readonly IRepository<OrganizationEntity> _repository = repository;
 
-		public OrganizationService(IRepository<OrganizationEntity> repository)
-		{
-			_repository = repository;
-		}
-
-		public async Task<IEnumerable<OrganizationEntity>> GetAllAsync() 
+        public async Task<IEnumerable<OrganizationEntity>> GetAllAsync() 
 		{
 			return await _repository.GetAllAsync();
 		}
 
-		public async Task<OrganizationEntity> CreateAsync(OrganizationEntity entity)
+        public IEnumerable<OrganizationEntity> GetAllChildrenByParentName(string name)
+        {
+            return _repository.GetAllChildrenByParentName(name);
+        }
+
+        public async Task<OrganizationEntity> CreateAsync(OrganizationEntity entity)
 		{
 			return await _repository.CreateAsync(entity);
 		}
 
-		public async Task<OrganizationEntity> SynchronizeAsync(OrganizationEntity entity)
+		public async Task<OrganizationEntity> SynchronizeAsync(IEnumerable<OrganizationEntity> entity)
 		{
 			return await _repository.SynchronizeAsync(entity);
 		}
