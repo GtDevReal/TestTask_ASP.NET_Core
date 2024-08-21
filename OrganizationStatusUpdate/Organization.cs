@@ -9,5 +9,9 @@ public partial class Organization
 
     public string Status { get; set; } = null!;
 
-    public string? Division { get; set; }
+    public string? ParentId { get; set; }
+
+    public virtual ICollection<Organization> InverseParent { get; set; } = new List<Organization>();
+
+    public virtual Organization? Parent { get; set; }
 }

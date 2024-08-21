@@ -111,18 +111,18 @@
 		});
 	};
 
-	// async function startUpdateLoop() {
-	// 	setInterval(async () => {
-	// 		try {
-	// 			switchIconsToUpdating();
-	// 			const updatedStatuses = await getUpdatedStatuses();
-	// 			updateStatuses(updatedStatuses);
-	// 		} 
-	// 		catch (error) {
-	// 			console.error('Ошибка получения обновлений:', error);
-	// 		}
-	// 	}, 3000);
-	// };
+	async function startUpdateLoop() {
+		setInterval(async () => {
+			try {
+				switchIconsToUpdating();
+				const updatedStatuses = await getUpdatedStatuses();
+				updateStatuses(updatedStatuses);
+			} 
+			catch (error) {
+				console.error('Ошибка получения обновлений:', error);
+			}
+		}, 3000);
+	};
 
 	startUpdateLoop();
 </script>

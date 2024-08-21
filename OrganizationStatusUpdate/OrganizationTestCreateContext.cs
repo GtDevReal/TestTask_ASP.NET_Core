@@ -28,6 +28,10 @@ public partial class OrganizationTestCreateContext : DbContext
             entity.HasKey(e => e.Name);
 
             entity.ToTable("Organization");
+
+            entity.HasIndex(e => e.ParentId, "IX_Organization_ParentId");
+
+            entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent).HasForeignKey(d => d.ParentId);
         });
 
         OnModelCreatingPartial(modelBuilder);
